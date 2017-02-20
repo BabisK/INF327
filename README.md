@@ -21,7 +21,7 @@ for (col in c("HFRI ", "EH", "M", "RVA", "ED", "CA", "DS", "EMN")){
 par(mfrow=c(1,1))
 ```
 
-[[/images/DependentVariables.png]]
+![Dependent Variables](BabisK.github.com/INF327/images/DependentVariables.jpg)
 
 ## Welcome to GitHub Pages
 
