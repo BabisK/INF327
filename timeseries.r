@@ -18,7 +18,7 @@ colnames(as_data) <- header
 rownames(as_data) <- dates
 
 # Plot all time series
-png(filename = "images/dependentVariables.png", width = 2400, height = 2000, res = 250)
+png(filename = "images/DependentVariables.png", width = 2400, height = 2000, res = 250)
 par(mfrow=c(4,2))
 for (col in c("HFRI", "EH", "M", "RVA", "ED", "CA", "DS", "EMN")){
   plot(ts(data = as_data[[paste(col)]], start = c(1990, 4), end = c(2004, 12), frequency = 12), ylab = paste(col))

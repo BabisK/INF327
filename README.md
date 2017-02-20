@@ -139,3 +139,77 @@ X-squared = 12.453, df = 1, p-value = 0.0004173
 Next up is the DS timeseries.
 
 ```R
+par(mfrow = c(3,1))
+plot(DS_data)
+acf(DS_data)
+pacf(DS_data)
+par(mfrow = c(1,1))
+```
+
+![DS timeseries](images/DSexploration.png)
+
+From the ACF plot we observe correlation on lag 2 while the PACF plot indicates partial autocorrelation on lag 1 and lag 15.
+
+The Box-Pierce test bellow confirms these observations.
+
+```R
+Box.test(DS_data,2,type="Box-Pierce")
+```
+```
+	Box-Pierce test
+
+data:  DS_data
+X-squared = 51.85, df = 2, p-value = 5.506e-12
+```
+
+As does the Ljung-Box test.
+
+```R
+Box.test(DS_data,2,type="Ljung-Box")
+```
+```
+	Box-Ljung test
+
+data:  DS_data
+X-squared = 52.762, df = 2, p-value = 3.49e-12
+```
+
+### Model fitting
+
+Given the ACF and PACF plots above we choose to fit:
+
+#### HFRI
+
+A MA(1) model for HFRI:
+```R
+modelHFRI = arima(HFRI_data, order = c(0,0,1))
+```
+```
+Call:
+arima(x = HFRI_data, order = c(0, 0, 1))
+
+Coefficients:
+         ma1  intercept
+      0.2357     0.0081
+s.e.  0.0664     0.0018
+
+sigma^2 estimated as 0.0003721:  log likelihood = 447.64,  aic = -889.28
+```
+
+#### DS
+
+A MA(2) model for DS:
+```R
+modelDS = arima(DS_data, order = c(0,0,2))
+```
+```
+Call:
+arima(x = DS_data, order = c(0, 0, 2))
+
+Coefficients:
+         ma1     ma2  intercept
+      0.6033  0.2295     0.0088
+s.e.  0.0766  0.0745     0.0021
+
+sigma^2 estimated as 0.0002294:  log likelihood = 490.28,  aic = -972.56
+```
