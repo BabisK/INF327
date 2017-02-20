@@ -10,6 +10,10 @@ library("lmtest") # for Breush Pagan Test (bptest) to detect hoscedasticity
 library("forecast")
 library("fGarch")
 
+#######################################################################################
+# Initial configuration
+#######################################################################################
+
 # Load and name the data
 header <- c("HFRI", "EH", "M", "RVA", "ED", "CA", "DS", "EMN", "MA", "RUS_Rf", "RUS_1_Rf_1", "MXUS_Rf", "MEM_Rf", "SMB", "HML", "MOM", "SBGC_Rf", "SBWG_Rf", "LHY_Rf", "DEFSPR", "FRBI_Rf", "GSCI__Rf", "VIX", "Rf")
 dates = seq(from = as.Date("1990-04-01", format='%Y-%m-%d'), to = as.Date("2005-12-01", format='%Y-%m-%d'), by = 'month')
@@ -25,6 +29,10 @@ for (col in c("HFRI", "EH", "M", "RVA", "ED", "CA", "DS", "EMN")){
 }
 par(mfrow=c(1,1))
 dev.off()
+
+#######################################################################################
+# First part
+#######################################################################################
 
 # Analyze HFRI
 HFRI_data <- ts(data = as_data$HFRI, start = c(1990, 4), end = c(2004, 12), frequency = 12)
@@ -63,12 +71,29 @@ boxLjung <- Box.test(DS_data,2,type="Ljung-Box")
 modelDS = arima(DS_data, order = c(0,0,2))
 
 #######################################################################################
+# Second part
+#######################################################################################
+
+# Shift variables
+shifted_data <- shift.column(data = as_data, columns = c("RUS_Rf", "RUS_1_Rf_1", "MXUS_Rf", "MEM_Rf", "SMB", "HML", "MOM", "SBGC_Rf", "SBWG_Rf", "LHY_Rf", "DEFSPR", "FRBI_Rf", "GSCI__Rf", "VIX", "Rf"))
 
 # Fit HFRI
-shifted_hfri_data <- shift.column(data = as_data, columns = 1, up = FALSE, newNames = "HFRI_1")
+fitHFRI <- lm(HFRI ~ RUS_Rf.Shifted + RUS_1_Rf_1.Shifted + MXUS_Rf.Shifted + MEM_Rf.Shifted + SMB.Shifted + HML.Shifted + MOM.Shifted + SBGC_Rf.Shifted + SBWG_Rf.Shifted + LHY_Rf.Shifted + DEFSPR.Shifted + FRBI_Rf.Shifted + GSCI__Rf.Shifted + VIX.Shifted + Rf.Shifted, shifted_data)
+stepHFRI <- stepAIC(fitHFRI, direction="both", trace = 0)
+summary(stepHFRI)
+stepHFRI$anova
 
-fitHFRI <- lm(HFRI_1 ~ RUS_Rf + RUS_1_Rf_1 + MXUS_Rf + MEM_Rf + SMB + HML + MOM + SBGC_Rf + SBWG_Rf + LHY_Rf + DEFSPR + FRBI_Rf + GSCI__Rf + VIX + Rf, shifted_hfri_data)
-stepHFRI <- stepAIC(fitHFRI, direction="both")
+# Fit DS
+fitDS <- lm(DS ~ RUS_Rf.Shifted + RUS_1_Rf_1.Shifted + MXUS_Rf.Shifted + MEM_Rf.Shifted + SMB.Shifted + HML.Shifted + MOM.Shifted + SBGC_Rf.Shifted + SBWG_Rf.Shifted + LHY_Rf.Shifted + DEFSPR.Shifted + FRBI_Rf.Shifted + GSCI__Rf.Shifted + VIX.Shifted + Rf.Shifted, shifted_data)
+stepDS <- stepAIC(fitDS, direction="both", trace = 0)
+summary(stepDS)
+stepDS$anova
+
+#######################################################################################
+# Third part
+#######################################################################################
+
+# Rework HFRI
 par(mfrow=c(2,2))
 plot(stepHFRI)
 par(mfrow=c(1,1))
@@ -87,10 +112,6 @@ par(mfrow=c(1,1))
 
 
 # FIT DS
-shifted_ds_data <- shift.column(data = as_data, columns = 7, up = FALSE, newNames = "DS_1")
-
-fitDS <- lm(DS_1 ~ RUS_Rf + RUS_1_Rf_1 + MXUS_Rf + MEM_Rf + SMB + HML + MOM + SBGC_Rf + SBWG_Rf + LHY_Rf + DEFSPR + FRBI_Rf + GSCI__Rf + VIX + Rf, shifted_ds_data)
-stepDS <- stepAIC(fitDS, direction="both")
 par(mfrow=c(2,2))
 plot(stepDS)
 par(mfrow=c(1,1))
