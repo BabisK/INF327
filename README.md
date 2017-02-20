@@ -23,40 +23,119 @@ par(mfrow=c(1,1))
 
 ![Dependent Variables](images/DependentVariables.png)
 
-## Welcome to GitHub Pages
+We are going to use the HFRI and DS variables for the analysis.
 
-You can use the [editor on GitHub](https://github.com/BabisK/INF327/edit/master/README.md) to maintain and preview the content for your website in Markdown files.
+## Timeseries models
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+In the analysis and model fitting phase we will use the data from April 1990 to December 2004.
 
-### Markdown
-
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
-
-```markdown
-Syntax highlighted code block
-
-# Header 1
-## Header 2
-### Header 3
-
-- Bulleted
-- List
-
-1. Numbered
-2. List
-
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
+```R
+HFRI_data <- ts(data = as_data$HFRI, start = c(1990, 4), end = c(2004, 12), frequency = 12)
+DS_data <- ts(data = as_data$DS, start = c(1990, 4), end = c(2004, 12), frequency = 12)
 ```
 
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
+### Stationarity
 
-### Jekyll Themes
+Before wokring on the models we need to make sure that the timeseries we are using are stationary processes. We will use the `ar()` function to automatically fit an AR model and perform an Augmented Dickey-Fuller test for the order decided by `ar()`.
 
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/BabisK/INF327/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
+```R
+ar <- ar(HFRI_data)
+adfTest(HFRI_data, lags = ar$order, type = "c")
+```
 
-### Support or Contact
+```
+Title:
+ Augmented Dickey-Fuller Test
 
-Having trouble with Pages? Check out our [documentation](https://help.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
+Test Results:
+  PARAMETER:
+    Lag Order: 1
+  STATISTIC:
+    Dickey-Fuller: -7.8606
+  P VALUE:
+    0.01
+
+Description:
+ Mon Feb 20 16:55:34 2017 by user: ckaidos
+
+Warning message:
+In adfTest(HFRI_data, lags = ar$order, type = "c") :
+  p-value smaller than printed p-value
+```
+
+As the ADF test indicates, the HFRI series is stationary (for lag 1). P-value is less than 0.01 thus the H_0 hypothesis that HFRI is non-stationary is rejected.
+
+```R
+ar <- ar(DS_data)
+adfTest(DS_data, lags = ar$order, type = "c")
+```
+
+```
+Title:
+ Augmented Dickey-Fuller Test
+
+Test Results:
+  PARAMETER:
+    Lag Order: 2
+  STATISTIC:
+    Dickey-Fuller: -6.2674
+  P VALUE:
+    0.01
+
+Description:
+ Mon Feb 20 16:57:57 2017 by user: ckaidos
+
+Warning message:
+In adfTest(DS_data, lags = ar$order, type = "c") :
+  p-value smaller than printed p-value
+```
+
+Again, as the ADF test indicated the DS series is stationary too. For DS the lag order is 2.
+
+Since both timeseries are stationary processes we can apply ARMA models on them.
+
+### Timeseries exploration
+
+First we are going to work with the HFRI timeseries.
+
+Bellow are the plots of the timeseries, the autocorrelation and partial autocorrelation plots.
+
+```R
+par(mfrow = c(3,1))
+plot(HFRI_data)
+acf(HFRI_data)
+pacf(HFRI_data)
+par(mfrow = c(1,1))
+```
+
+![HFRI timeseries](images/HFRIexploration.png)
+
+From the ACF plot we observe correlation on lag 1 while the PACF plot indicates partial autocorrelation on lag 1 and lag 15.
+
+The Box-Pierce test bellow confirms these observations.
+
+```R
+Box.test(HFRI_data,1,type="Box-Pierce")
+```
+```
+	Box-Pierce test
+
+data:  HFRI_data
+X-squared = 12.244, df = 1, p-value = 0.0004667
+```
+
+As does the Ljung-Box test.
+
+```R
+Box.test(HFRI_data,1,type="Ljung-Box")
+```
+```
+	Box-Ljung test
+
+data:  HFRI_data
+X-squared = 12.453, df = 1, p-value = 0.0004173
+```
+
+Next up is the DS timeseries.
+
+```R
