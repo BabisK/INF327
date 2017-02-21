@@ -358,4 +358,85 @@ Box.test(residuals(stepDS)^2,1,type="Ljung-Box")
 # Forecasting
 #######################################################################################
 
+# HFRI
+forecastMA1HFRI <- predict(modelHFRI, 12)
+forecastMA12HFRI <- predict(modelHFRI12, 12)
+forecastLMHFRI <- predict(stepHFRI, shifted_data_new, se.fit = TRUE)
 
+png(filename = "images/forecastMA1HFRI.png", width = 2400, height = 2000, res = 250)
+UL <- forecastMA1HFRI$pred + forecastMA1HFRI$se
+LL <- forecastMA1HFRI$pred - forecastMA1HFRI$se
+ts.plot(ts(shifted_data$HFRI, start = c(1990, 5), end = c(2004, 12), frequency = 12), forecastMA1HFRI$pred, ts(shifted_data_new$HFRI, start = c(2005, 1), end = c(2005, 12), frequency = 12), main="MA(1) HFRI")
+lines(forecastMA1HFRI$pred, col="red")
+lines(UL, col="blue", lty="dashed")
+lines(LL, col="blue", lty="dashed")
+dev.off()
+
+png(filename = "images/forecastMA12HFRI.png", width = 2400, height = 2000, res = 250)
+UL <- forecastMA12HFRI$pred + forecastMA12HFRI$se
+LL <- forecastMA12HFRI$pred - forecastMA12HFRI$se
+ts.plot(ts(shifted_data$HFRI, start = c(1990, 5), end = c(2004, 12), frequency = 12), forecastMA12HFRI$pred, ts(shifted_data_new$HFRI, start = c(2005, 1), end = c(2005, 12), frequency = 12), main="MA(12) HFRI")
+lines(forecastMA12HFRI$pred, col="red")
+lines(UL, col="blue", lty="dashed")
+lines(LL, col="blue", lty="dashed")
+dev.off()
+
+png(filename = "images/forecastLMHFRI.png", width = 2400, height = 2000, res = 250)
+UL <- forecastLMHFRI$fit + forecastLMHFRI$se.fit
+LL <- forecastLMHFRI$fit - forecastLMHFRI$se.fit
+p <- ts(forecastLMHFRI$fit, start = c(2005, 1), end = c(2005, 12), frequency = 12)
+ts.plot(ts(shifted_data$HFRI, start = c(1990, 5), end = c(2004, 12), frequency = 12), p, ts(shifted_data_new$HFRI, start = c(2005, 1), end = c(2005, 12), frequency = 12), main="LM HFRI")
+lines(p, col="red")
+lines(UL, col="blue", lty="dashed")
+lines(LL, col="blue", lty="dashed")
+dev.off()
+
+msfeMA1HFRI <- sum((forecastMA1HFRI$pred - shifted_data_new$HFRI)^2)/12
+msfeMA12HFRI <- sum((forecastMA12HFRI$pred - shifted_data_new$HFRI)^2)/12
+msfeLMHFRI <- sum((forecastLMHFRI$fit - shifted_data_new$HFRI)^2)/12
+
+hitMA1HFRI <- sum((forecastMA1HFRI$pred * shifted_data_new$HFRI) > 0)/12
+hitMA12HFRI <- sum((forecastMA12HFRI$pred * shifted_data_new$HFRI) > 0)/12
+hitLMHFRI <- sum((forecastLMHFRI$fit * shifted_data_new$HFRI) > 0)/12
+
+# DS
+
+forecastMA1DS <- predict(modelDS, 12)
+forecastMA12DS <- predict(modelDS12, 12)
+forecastLMDS <- predict(stepDS, shifted_data_new, se.fit = TRUE)
+
+png(filename = "images/forecastMA1DS.png", width = 2400, height = 2000, res = 250)
+UL <- forecastMA1DS$pred + forecastMA1DS$se
+LL <- forecastMA1DS$pred - forecastMA1DS$se
+ts.plot(ts(shifted_data$DS, start = c(1990, 5), end = c(2004, 12), frequency = 12), forecastMA1DS$pred, ts(shifted_data_new$DS, start = c(2005, 1), end = c(2005, 12), frequency = 12), main="MA(2) DS")
+lines(forecastMA1DS$pred, col="red")
+lines(UL, col="blue", lty="dashed")
+lines(LL, col="blue", lty="dashed")
+dev.off()
+
+png(filename = "images/forecastMA12DS.png", width = 2400, height = 2000, res = 250)
+UL <- forecastMA12DS$pred + forecastMA12DS$se
+LL <- forecastMA12DS$pred - forecastMA12DS$se
+ts.plot(ts(shifted_data$DS, start = c(1990, 5), end = c(2004, 12), frequency = 12), forecastMA12DS$pred, ts(shifted_data_new$DS, start = c(2005, 1), end = c(2005, 12), frequency = 12), main="MA(12) DS")
+lines(forecastMA12DS$pred, col="red")
+lines(UL, col="blue", lty="dashed")
+lines(LL, col="blue", lty="dashed")
+dev.off()
+
+png(filename = "images/forecastLMDS.png", width = 2400, height = 2000, res = 250)
+UL <- forecastLMDS$fit + forecastLMDS$se.fit
+LL <- forecastLMDS$fit - forecastLMDS$se.fit
+p <- ts(forecastLMDS$fit, start = c(2005, 1), end = c(2005, 12), frequency = 12)
+ts.plot(ts(shifted_data$DS, start = c(1990, 5), end = c(2004, 12), frequency = 12), p, ts(shifted_data_new$DS, start = c(2005, 1), end = c(2005, 12), frequency = 12), main="LM DS")
+lines(p, col="red")
+lines(UL, col="blue", lty="dashed")
+lines(LL, col="blue", lty="dashed")
+dev.off()
+
+msfeMA1DS <- sum((forecastMA1DS$pred - shifted_data_new$DS)^2)/12
+msfeMA12DS <- sum((forecastMA12DS$pred - shifted_data_new$DS)^2)/12
+msfeLMDS <- sum((forecastLMDS$fit - shifted_data_new$DS)^2)/12
+
+hitMA1DS <- sum((forecastMA1DS$pred * shifted_data_new$DS) > 0)/12
+hitMA12DS <- sum((forecastMA12DS$pred * shifted_data_new$DS) > 0)/12
+hitLMDS <- sum((forecastLMDS$fit * shifted_data_new$DS) > 0)/12

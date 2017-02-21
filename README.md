@@ -689,19 +689,124 @@ As the diagnostics show that both ARIMA and regression models have no issues wit
 
 ## Model Selection
 
+### Model specification
+
 The models constructed are the following:
 
 ModelHFRI: MA(1)
 ![MA1](https://latex.codecogs.com/gif.latex?HFRI_t%20%3D%200.0081%20&plus;%200.2357%5Cvarepsilon_%7Bt-1%7D%20&plus;%20%5Cvarepsilon_t%20%5Chfill%20%5Cvarepsilon_t%20%5Csim%20N%280%2C%200.0003721%29)
 
 ModelDS: MA(2)
-![MA2](https://latex.codecogs.com/gif.latex?HFRI_t%20%3D%200.0088%20&plus;%200.6033%5Cvarepsilon_%7Bt-1%7D%20&plus;%200.2295%5Cvarepsilon_%7Bt-2%7D%20&plus;%20%5Cvarepsilon_t%20%5Chfill%20%5Cvarepsilon_t%20%5Csim%20N%280%2C%200.0002294%29)
+![MA2](https://latex.codecogs.com/gif.latex?DS_t%20%3D%200.0088%20&plus;%200.6033%5Cvarepsilon_%7Bt-1%7D%20&plus;%200.2295%5Cvarepsilon_%7Bt-2%7D%20&plus;%20%5Cvarepsilon_t%20%5Chfill%20%5Cvarepsilon_t%20%5Csim%20N%280%2C%200.0002294%29)
 
-ModelHFRI12, ModelDS12: MA(12)
-![MA12](https://latex.codecogs.com/gif.latex?HFRI_t%20%3D%20%5Ctheta_1%5Cvarepsilon_%7Bt-1%7D%20&plus;%20%5Ctheta_2%5Cvarepsilon_%7Bt-2%7D%20&plus;%20%5Ctheta_3%5Cvarepsilon_%7Bt-3%7D%20&plus;%20%5Ctheta_4%5Cvarepsilon_%7Bt-4%7D%20&plus;%20%5Ctheta_5%5Cvarepsilon_%7Bt-5%7D%20&plus;%20%5Ctheta_6%5Cvarepsilon_%7Bt-6%7D%20&plus;%20%5Ctheta_7%5Cvarepsilon_%7Bt-7%7D%20&plus;%20%5Ctheta_8%5Cvarepsilon_%7Bt-8%7D%20&plus;%20%5Ctheta_9%5Cvarepsilon_%7Bt-9%7D%20&plus;%20%5Ctheta_%7B10%7D%5Cvarepsilon_%7Bt-10%7D%20&plus;%20%5Ctheta_%7B11%7D%5Cvarepsilon_%7Bt-11%7D%20&plus;%20%5Ctheta_%7B12%7D%5Cvarepsilon_%7Bt-12%7D%20&plus;%20%5Cvarepsilon_t)
+ModelHFRI12: MA(12)
+![MA12](https://latex.codecogs.com/gif.latex?HFRI_t%20%3D%200.0077%20&plus;%200.2356%5Cvarepsilon_%7Bt-1%7D%20&plus;%200.0952%5Cvarepsilon_%7Bt-2%7D%20-%200.0066%5Cvarepsilon_%7Bt-3%7D%20-%200.0036%5Cvarepsilon_%7Bt-4%7D%20&plus;%200.0086%5Cvarepsilon_%7Bt-5%7D%20&plus;%200.1825%5Cvarepsilon_%7Bt-6%7D%20&plus;%200.1748%5Cvarepsilon_%7Bt-7%7D%20&plus;%200.1547%5Cvarepsilon_%7Bt-8%7D%20&plus;%200.2845%5Cvarepsilon_%7Bt-9%7D%20&plus;%200.1993%5Cvarepsilon_%7Bt-10%7D%20-%200.0156%5Cvarepsilon_%7Bt-11%7D%20-%200.0327%5Cvarepsilon_%7Bt-12%7D%20&plus;%20%5Cvarepsilon_t%20%5Chfill%20%5Cvarepsilon_t%20%5Csim%20N%280%2C%200.0003476%29)
+
+ModelDS12: MA(12)
+![MA12DS](https://latex.codecogs.com/gif.latex?HFRI_t%20%3D%200.0088%20&plus;%200.6271%5Cvarepsilon_%7Bt-1%7D%20&plus;%200.1868%5Cvarepsilon_%7Bt-2%7D%20-%200.0201%5Cvarepsilon_%7Bt-3%7D%20&plus;%200.1244%5Cvarepsilon_%7Bt-4%7D%20&plus;%200.0488%5Cvarepsilon_%7Bt-5%7D%20&plus;%200.0436%5Cvarepsilon_%7Bt-6%7D%20-%200.0071%5Cvarepsilon_%7Bt-7%7D%20-%200.1619%5Cvarepsilon_%7Bt-8%7D%20-%200.1173%5Cvarepsilon_%7Bt-9%7D%20&plus;%200.0126%5Cvarepsilon_%7Bt-10%7D%20&plus;%200.0498%5Cvarepsilon_%7Bt-11%7D%20&plus;%200.1677%5Cvarepsilon_%7Bt-12%7D%20&plus;%20%5Cvarepsilon_t%20%5Chfill%20%5Cvarepsilon_t%20%5Csim%20N%280%2C%200.0002181%29)
 
 stepHFRI: Linear Model
+![LMHFRI](https://latex.codecogs.com/gif.latex?HFRI_t%20%3D%200.008036%20&plus;%200.067441MEMRf_%7Bt-1%7D%20&plus;%20%5Cvarepsilon_t%20%5Chfill%20e_t%20%5Csim%20N%280%2C%20%5Csigma%5E2%29)
 
+stepDS: Linear Model
+![LMDS](https://latex.codecogs.com/gif.latex?DS_t%20%3D%200.01152%20&plus;%200.10051RUSRf_%7Bt-1%7D%20&plus;%200.05982RUS1RF1_%7Bt-1%7D%20&plus;%200.05866MEMRF_%7Bt-1%7D%20&plus;%200.10644SMB_%7Bt-1%7D%20&plus;%200.05292HML_%7Bt-1%7D%20&plus;%200.15194SBWGRf_%7Bt-1%7D%20&plus;%200.30199FRBIRf%20-%201.16338Rf%20&plus;%20%5Cvarepsilon_t%20%5Chfill%20e_t%20%5Csim%20N%280%2C%20%5Csigma%5E2%29)
+
+### AIC values
+
+ModelHFRI|ModelHFRI12|stepHFRI
+---------|-----------|--------
+-889.2824|-877.8891|-1383.518
+
+ModelDS|ModelDS12|stepDS
+-------|---------|--------
+-972.5627|-960.622|-1463.832
+
+As expected, the MA(12) models have lower AIC value since they contain lots of "junk" parameters with large variance. Also, the linear models demonstrate better AIC values.
 
 ## Forecast
 
+### HFRI
+
+We use the predict() method to forecast values unseen. We will use all models to predict the timeseries for the left out data of 2005.
+
+```R
+forecastMA1HFRI <- predict(modelHFRI, 12)
+forecastMA12HFRI <- predict(modelHFRI12, 12)
+forecastLMHFRI <- predict(stepHFRI, shifted_data_new, se.fit = TRUE)
+```
+
+The following plots show the whole timeseries, the left out data and the prediction in red color. With blue is S.E of the prediction:
+
+![MA1](images/forecastMA1HFRI.png)
+![MA12](images/forecastMA12HFRI.png)
+![LM](images/forecastLMHFRI.png)
+
+The MSFE is calculated with the formula bellow:
+```R
+msfeMA1HFRI <- sum((forecastMA1HFRI$pred - shifted_data_new$HFRI)^2)/12
+msfeMA12HFRI <- sum((forecastMA12HFRI$pred - shifted_data_new$HFRI)^2)/12
+msfeLMHFRI <- sum((forecastLMHFRI$fit - shifted_data_new$HFRI)^2)/12
+```
+The results are:
+MA(1) HFRI MSFE: 0.0001830464
+MA(12) HFRI MSFE: 0.0001808294
+LM HFRI MSFE: 0.0002173593
+
+The hit ratio is calculated like this:
+```R
+hitMA1HFRI <- sum((forecastMA1HFRI$pred * shifted_data_new$HFRI) > 0)/12
+hitMA12HFRI <- sum((forecastMA12HFRI$pred * shifted_data_new$HFRI) > 0)/12
+hitLMHFRI <- sum((forecastLMHFRI$fit * shifted_data_new$HFRI) > 0)/12
+```
+
+The results are:
+MA(1) HFRI HR: 66.6%
+MA(12) HFRI HR: 58.3%
+LM HFRI HR: 66.6%
+
+The hit ratio is not accurate as all the predictions where positive values.
+The MA(12) has the best MSFE but not by far, second being the MA(1) model.
+
+### DS
+
+The predictions where made as follows:
+```R
+forecastMA1DS <- predict(modelDS, 12)
+forecastMA12DS <- predict(modelDS12, 12)
+forecastLMDS <- predict(stepDS, shifted_data_new, se.fit = TRUE)
+```
+
+The following plots show the whole timeseries, the left out data and the prediction in red color. With blue is S.E of the prediction:
+![MA1](images/forecastMA1DS.png)
+![MA12](images/forecastMA12DS.png)
+![LM](images/forecastLMDS.png)
+
+The MSFE is calculated with the formula bellow:
+```R
+msfeMA1DS <- sum((forecastMA1DS$pred - shifted_data_new$DS)^2)/12
+msfeMA12DS <- sum((forecastMA12DS$pred - shifted_data_new$DS)^2)/12
+msfeLMDS <- sum((forecastLMDS$fit - shifted_data_new$DS)^2)/12
+```
+
+The results are:
+MA(2) DS MSFE: 9.752394e-05
+MA(12) DS MSFE: 0.0001227059
+LM HFRI MSFE: 8.255168e-05
+
+The hit ratio is calculated like this:
+```R
+hitMA1DS <- sum((forecastMA1DS$pred * shifted_data_new$DS) > 0)/12
+hitMA12DS <- sum((forecastMA12DS$pred * shifted_data_new$DS) > 0)/12
+hitLMDS <- sum((forecastLMDS$fit * shifted_data_new$DS) > 0)/12
+```
+
+The results are:
+MA(2) DS HR: 66.6%
+MA(12) DS HR: 66.6%
+LM DS HR: 66.6%
+
+In this series, the linear model does the most accurate prediction but the MA(2) model is very close.
+
+## Conclusion
+
+As a conclusion for this exercise I'll make the observation that "overfitting" can destroy an otherwise unsuspecting model. The MA(1) and MA(2) models which performed static predictions for most of 2005 where better (given the cost and complexity) from the MA(12) models. Another observation is that traditional simple linear regression can also perform great, at least as long as there are no autocorrelations or serious heteroscedatocity.
