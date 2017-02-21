@@ -52,6 +52,7 @@ dev.off()
 Box.test(HFRI_data,1,type="Box-Pierce")
 Box.test(HFRI_data,1,type="Ljung-Box")
 
+# MA(1)
 modelHFRI = arima(HFRI_data, order = c(0,0,1))
 
 png(filename = "images/HFRIarmaacf.png", width = 2400, height = 2000, res = 250)
@@ -81,6 +82,36 @@ dev.off()
 Box.test(residuals(modelHFRI)^2,1,type="Box-Pierce")
 Box.test(residuals(modelHFRI)^2,1,type="Ljung-Box")
 
+# MA(12)
+modelHFRI12 = arima(HFRI_data, order = c(0,0,12))
+
+png(filename = "images/HFRI12armaacf.png", width = 2400, height = 2000, res = 250)
+par(mfrow = c(2,1))
+acf(residuals(modelHFRI12))
+pacf(residuals(modelHFRI12))
+par(mfrow = c(1,1))
+dev.off()
+
+Box.test(residuals(modelHFRI12),12,type="Box-Pierce")
+Box.test(residuals(modelHFRI12),12,type="Ljung-Box")
+
+png(filename = "images/HFRI12armaqq.png", width = 2400, height = 2000, res = 250)
+qqnorm(residuals(modelHFRI12))
+qqline(residuals(modelHFRI12))
+dev.off()
+
+shapiro.test(residuals(modelHFRI12))
+
+png(filename = "images/HFRI12armaacf2.png", width = 2400, height = 2000, res = 250)
+par(mfrow = c(2,1))
+acf(residuals(modelHFRI12)^2)
+pacf(residuals(modelHFRI12)^2)
+par(mfrow = c(1,1))
+dev.off()
+
+Box.test(residuals(modelHFRI12)^2,1,type="Box-Pierce")
+Box.test(residuals(modelHFRI12)^2,1,type="Ljung-Box")
+
 # Analyze DS
 DS_data <- ts(data = as_data$DS, start = c(1990, 4), end = c(2004, 12), frequency = 12)
 ar <- ar(DS_data)
@@ -97,6 +128,7 @@ dev.off()
 Box.test(DS_data,2,type="Box-Pierce")
 Box.test(DS_data,2,type="Ljung-Box")
 
+# MA(2)
 modelDS = arima(DS_data, order = c(0,0,2))
 
 png(filename = "images/DSarmaacf.png", width = 2400, height = 2000, res = 250)
@@ -126,12 +158,44 @@ dev.off()
 Box.test(residuals(modelDS)^2,1,type="Box-Pierce")
 Box.test(residuals(modelDS)^2,1,type="Ljung-Box")
 
+# MA(12)
+modelDS12 = arima(DS_data, order = c(0,0,12))
+
+png(filename = "images/DS12armaacf.png", width = 2400, height = 2000, res = 250)
+par(mfrow = c(2,1))
+acf(residuals(modelDS12))
+pacf(residuals(modelDS12))
+par(mfrow = c(1,1))
+dev.off()
+
+Box.test(residuals(modelDS12),1,type="Box-Pierce")
+Box.test(residuals(modelDS12),1,type="Ljung-Box")
+
+png(filename = "images/DS12armaqq.png", width = 2400, height = 2000, res = 250)
+qqnorm(residuals(modelDS12))
+qqline(residuals(modelDS12))
+dev.off()
+
+shapiro.test(residuals(modelDS12))
+
+png(filename = "images/DS12armaacf2.png", width = 2400, height = 2000, res = 250)
+par(mfrow = c(2,1))
+acf(residuals(modelDS12)^2)
+pacf(residuals(modelDS12)^2)
+par(mfrow = c(1,1))
+dev.off()
+
+Box.test(residuals(modelDS12)^2,1,type="Box-Pierce")
+Box.test(residuals(modelDS12)^2,1,type="Ljung-Box")
+
 #######################################################################################
 # Second part
 #######################################################################################
 
 # Shift variables
-shifted_data <- shift.column(data = as_data, columns = c("RUS_Rf", "RUS_1_Rf_1", "MXUS_Rf", "MEM_Rf", "SMB", "HML", "MOM", "SBGC_Rf", "SBWG_Rf", "LHY_Rf", "DEFSPR", "FRBI_Rf", "GSCI__Rf", "VIX", "Rf"))
+shifted_data <- shift.column(data = as_data, up = FALSE, columns = c("RUS_Rf", "RUS_1_Rf_1", "MXUS_Rf", "MEM_Rf", "SMB", "HML", "MOM", "SBGC_Rf", "SBWG_Rf", "LHY_Rf", "DEFSPR", "FRBI_Rf", "GSCI__Rf", "VIX", "Rf"))
+shifted_data_new <- shifted_data[c(177,178,179,180,181,182,183,184,185,186,187,188),]
+shifted_data <- shifted_data[-c(188,187,186,185,184,183,182,181,180,179, 178, 177),]
 
 # Fit HFRI
 fitHFRI <- lm(HFRI ~ RUS_Rf.Shifted + RUS_1_Rf_1.Shifted + MXUS_Rf.Shifted + MEM_Rf.Shifted + SMB.Shifted + HML.Shifted + MOM.Shifted + SBGC_Rf.Shifted + SBWG_Rf.Shifted + LHY_Rf.Shifted + DEFSPR.Shifted + FRBI_Rf.Shifted + GSCI__Rf.Shifted + VIX.Shifted + Rf.Shifted, shifted_data)
@@ -178,23 +242,8 @@ pacf(residuals(stepHFRI)^2)
 par(mfrow=c(1,1))
 dev.off()
 
-bptest(stepHFRI)
-
-#####
-
-fixHFRI<-arima(shifted_data$HFRI, order = c(0,0,10), fixed=c(NA, 0, 0, 0, 0, 0, 0, 0, 0, NA, NA, NA, NA, NA, NA), xreg = cbind(shifted_data$RUS_1_Rf_1.Shifted, shifted_data$MEM_Rf.Shifted, shifted_data$DEFSPR.Shifted, shifted_data$VIX.Shifted)) 
-par(mfrow=c(2,1))
-acf(residuals(fixHFRI))
-pacf(residuals(fixHFRI))
-par(mfrow=c(1,1))
-
-par(mfrow=c(2,1))
-acf(residuals(fixHFRI)^2)
-pacf(residuals(fixHFRI)^2)
-par(mfrow=c(1,1))
-
-Box.test(residuals(stepHFRI),1,type="Box-Pierce")
-
+Box.test(residuals(stepHFRI)^2,2,type="Box-Pierce")
+Box.test(residuals(stepHFRI)^2,2,type="Ljung-Box")
 
 ######
 
@@ -216,8 +265,8 @@ pacf(residuals(stepDS))
 par(mfrow=c(1,1))
 dev.off()
 
-Box.test(residuals(stepDS),1,type="Box-Pierce")
-Box.test(residuals(stepDS),1,type="Ljung-Box")
+Box.test(residuals(stepDS),8,type="Box-Pierce")
+Box.test(residuals(stepDS),8,type="Ljung-Box")
 
 # Heteroscedasticity
 png(filename = "images/DSlm2acf.png", width = 2400, height = 2000, res = 250)
@@ -227,19 +276,86 @@ pacf(residuals(stepDS)^2)
 par(mfrow=c(1,1))
 dev.off()
 
-bptest(stepDS)
+Box.test(residuals(stepDS)^2,1,type="Box-Pierce")
+Box.test(residuals(stepDS)^2,1,type="Ljung-Box")
 
-######################################################################################
+#######################################################################################
+# Bellow ARMA models are fitted on the residuals of regression. This is not needed according to
+# the tests performed but is left in the code for the sake of completeness
+#######################################################################################
+
+# Correcting HFRI
+#fixHFRI<-arima(shifted_data$HFRI, order = c(0,0,1), xreg = cbind(shifted_data$MEM_Rf.Shifted)) 
+#png(filename = "images/HFRIlmarmaacf.png", width = 2400, height = 2000, res = 250)
+#par(mfrow=c(2,1))
+#acf(residuals(fixHFRI))
+#pacf(residuals(fixHFRI))
+#par(mfrow=c(1,1))
+#dev.off()
+
+#Box.test(residuals(fixHFRI),1,type="Box-Pierce")
+#Box.test(residuals(fixHFRI),1,type="Ljung-Box")
+
+#png(filename = "images/HFRIlmarmaacf2.png", width = 2400, height = 2000, res = 250)
+#par(mfrow=c(2,1))
+#acf(residuals(fixHFRI)^2)
+#pacf(residuals(fixHFRI)^2)
+#par(mfrow=c(1,1))
+#dev.off()
+
+#Box.test(residuals(fixHFRI)^2,1,type="Box-Pierce")
+#Box.test(residuals(fixHFRI)^2,1,type="Ljung-Box")
+
+#png(filename = "images/HFRIlmarmaqq.png", width = 2400, height = 2000, res = 250)
+#qqnorm(residuals(fixHFRI))
+#qqline(residuals(fixHFRI))
+#dev.off()
+
+#shapiro.test(residuals(fixHFRI))
+
+# Correcting DS
+#fixDS<-arima(shifted_data$DS, order = c(0,0,1), xreg = cbind(shifted_data$RUS_Rf.Shifted, shifted_data$RUS_1_Rf_1.Shifted, shifted_data$HML.Shifted, shifted_data$MOM.Shifted, shifted_data$LHY_Rf.Shifted, shifted_data$DEFSPR.Shifted, shifted_data$VIX.Shifted, shifted_data$Rf.Shifted)) 
+#png(filename = "images/DSlmarmaacf.png", width = 2400, height = 2000, res = 250)
+#par(mfrow=c(2,1))
+#acf(residuals(fixDS))
+#pacf(residuals(fixDS))
+#par(mfrow=c(1,1))
+#dev.off()
+
+#Box.test(residuals(fixDS),1,type="Box-Pierce")
+#Box.test(residuals(fixDS),1,type="Ljung-Box")
+
+#png(filename = "images/DSlmarmaacf2.png", width = 2400, height = 2000, res = 250)
+#par(mfrow=c(2,1))
+#acf(residuals(fixDS)^2)
+#pacf(residuals(fixDS)^2)
+#par(mfrow=c(1,1))
+#dev.off()
+
+#Box.test(residuals(fixDS)^2,1,type="Box-Pierce")
+#Box.test(residuals(fixDS)^2,1,type="Ljung-Box")
+
+#png(filename = "images/DSlmarmaqq.png", width = 2400, height = 2000, res = 250)
+#qqnorm(residuals(fixDS))
+#qqline(residuals(fixDS))
+#dev.off()
+
+#shapiro.test(residuals(fixDS))
 
 # ACF/PAC on residuals: https://onlinecourses.science.psu.edu/stat510/node/72
-residualsHFRI <- ts(stepHFRI$residuals, start = c(1990, 4), end = c(2004, 12), frequency = 12)
-par(mfrow=c(3,1))
-plot(residualsHFRI)
-acf(residualsHFRI)
-pacf(residualsHFRI)
-par(mfrow=c(1,1))
-adfTest(residualsHFRI, lags = 10, type = "ct")
+#residualsHFRI <- ts(stepHFRI$residuals, start = c(1990, 4), end = c(2004, 12), frequency = 12)
+#par(mfrow=c(3,1))
+#plot(residualsHFRI)
+#acf(residualsHFRI)
+#pacf(residualsHFRI)
+#par(mfrow=c(1,1))
+#adfTest(residualsHFRI, lags = 10, type = "ct")
+
+#fit.spec <- ugarchspec(variance.model = list(model = "fGARCH",  garchOrder = c(1, 1), submodel="GARCH"), mean.model = list(armaOrder = c(0, 10), include.mean = TRUE, external.regressors = cbind(shifted_data$RUS_1_Rf_1.Shifted, shifted_data$MEM_Rf.Shifted, shifted_data$DEFSPR.Shifted, shifted_data$VIX.Shifted)), distribution.model = "norm")
+#fit <- ugarchfit(data = shifted_data$HFRI, spec = fit.spec)
+
+#######################################################################################
+# Forecasting
+#######################################################################################
 
 
-fit.spec <- ugarchspec(variance.model = list(model = "fGARCH",  garchOrder = c(1, 1), submodel="GARCH"), mean.model = list(armaOrder = c(0, 10), include.mean = TRUE, external.regressors = cbind(shifted_data$RUS_1_Rf_1.Shifted, shifted_data$MEM_Rf.Shifted, shifted_data$DEFSPR.Shifted, shifted_data$VIX.Shifted)), distribution.model = "norm")
-fit <- ugarchfit(data = shifted_data$HFRI, spec = fit.spec)

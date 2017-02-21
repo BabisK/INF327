@@ -180,7 +180,7 @@ Given the ACF and PACF plots above we choose to fit:
 
 #### HFRI
 
-A MA(1) model for HFRI:
+A MA(1) model would be enough to capture the autocorrelation of HFRI, however we will alseo use MA(12) to be able to forecast for 12 periods. The MA(1) model and analysis follows:
 ```R
 modelHFRI = arima(HFRI_data, order = c(0,0,1))
 ```
@@ -243,9 +243,73 @@ data:  residuals(modelHFRI)^2
 X-squared = 0.3943, df = 1, p-value = 0.53
 ```
 
+Now the MA(12) model and analysis:
+```R
+modelHFRI = arima(HFRI_data, order = c(0,0,12))
+```
+```
+Call:
+arima(x = HFRI_data, order = c(0, 0, 12))
+
+Coefficients:
+         ma1     ma2      ma3      ma4     ma5     ma6     ma7     ma8     ma9    ma10     ma11     ma12  intercept
+      0.2356  0.0952  -0.0066  -0.0036  0.0086  0.1825  0.1748  0.1547  0.2845  0.1993  -0.0156  -0.0327     0.0077
+s.e.  0.0766  0.0810   0.0823   0.0829  0.0829  0.0883  0.0829  0.0967  0.1007  0.0924   0.0920   0.0914     0.0031
+
+sigma^2 estimated as 0.0003476:  log likelihood = 452.94,  aic = -877.89
+```
+
+The ACF and PACF plots of the residuals of the model are good, no more autocorrelation:
+
+![MA(1) ACF/PACF](images/HFRI12armaacf.png)
+
+The Box-Pierce and Box-Ljung tests confirm the absence of autocorrelation:
+```
+	Box-Pierce test
+
+data:  residuals(modelHFRI12)
+X-squared = 3.1334, df = 12, p-value = 0.9945
+```
+```
+	Box-Ljung test
+
+data:  residuals(modelHFRI12)
+X-squared = 3.3148, df = 12, p-value = 0.9929
+```
+
+The QQ-plot of the residuals indicates a problem at the tails of the distribution:
+
+![MA(1) ACF/PACF](images/HFRI12armaqq.png)
+
+And the Shapiro test confirms it:
+```
+	Shapiro-Wilk normality test
+
+data:  residuals(modelHFRI12)
+W = 0.97788, p-value = 0.006425
+```
+
+Finally, the squares of the residuals are not autocorrelated as can be seen in the ACF and PACF plots bellow:
+![MA(1) ACF/PACF](images/HFRI12armaacf2.png)
+
+The Box-Pierce and Box-Ljung tests confirm the absence of autocorrelation on the residuals:
+```
+	Box-Pierce test
+
+data:  residuals(modelHFRI12)^2
+X-squared = 0.23451, df = 1, p-value = 0.6282
+```
+```
+	Box-Ljung test
+
+data:  residuals(modelHFRI12)^2
+X-squared = 0.23851, df = 1, p-value = 0.6253
+```
+
 #### DS
 
-A MA(2) model for DS:
+A MA(2) model would be enough to capture the autocorrelation of DS. We will also fit a MA(12) to make predictions for 12 periods.
+The MA(2) model and the analysis:
 ```R
 modelDS = arima(DS_data, order = c(0,0,2))
 ```
@@ -307,6 +371,68 @@ data:  residuals(modelDS)^2
 X-squared = 0.018561, df = 1, p-value = 0.8916
 ```
 
+The MA(12) model and the analysis:
+```R
+modelDS = arima(DS_data, order = c(0,0,12))
+```
+```
+Call:
+arima(x = DS_data, order = c(0, 0, 12))
+
+Coefficients:
+         ma1     ma2      ma3     ma4     ma5     ma6      ma7      ma8      ma9    ma10    ma11    ma12  intercept
+      0.6271  0.1868  -0.0201  0.1244  0.0488  0.0436  -0.0071  -0.1619  -0.1173  0.0126  0.0498  0.1677     0.0088
+s.e.  0.0781  0.0913   0.0970  0.0943  0.1017  0.1062   0.0882   0.1160   0.1303  0.0974  0.1097  0.0859     0.0022
+
+sigma^2 estimated as 0.0002181:  log likelihood = 494.31,  aic = -960.62
+```
+
+The ACF and PACF plots of the residuals of the model are good, no more autocorrelation:
+
+![MA(12) ACF/PACF](images/DS12armaacf.png)
+
+The Box-Pierce and Box-Ljung tests confirm the absence of autocorrelation:
+```
+	Box-Pierce test
+
+data:  residuals(modelDS12)
+X-squared = 0.022028, df = 1, p-value = 0.882
+```
+```
+	Box-Ljung test
+
+data:  residuals(modelDS12)
+X-squared = 0.022403, df = 1, p-value = 0.881
+```
+The QQ-plot of the residuals indicates a problem at the tails of the distribution:
+
+![MA(12) ACF/PACF](images/DS12armaqq.png)
+
+And the Shapiro test confirms it:
+```
+	Shapiro-Wilk normality test
+
+data:  residuals(modelDS12)
+W = 0.93095, p-value = 1.786e-07
+```
+
+Finally, the squares of the residuals are not autocorrelated as can be seen in the ACF and PACF plots bellow:
+![MA(12) ACF/PACF](images/DS12armaacf2.png)
+
+The Box-Pierce and Box-Ljung tests confirm the absence of autocorrelation on the residuals:
+```
+	Box-Pierce test
+
+data:  residuals(modelDS12)^2
+X-squared = 0.016717, df = 1, p-value = 0.8971
+```
+```
+	Box-Ljung test
+
+data:  residuals(modelDS12)^2
+X-squared = 0.017002, df = 1, p-value = 0.8963
+```
+
 ## Linear Regression
 
 In this section we will try to use linear regression to fit the dependent variables based on the independent ones. 
@@ -316,7 +442,7 @@ In this section we will try to use linear regression to fit the dependent variab
 To achieve this regression on previous values of the independent variables, we need to created new columns containing the shifted values
 
 ```R
-shifted_data <- shift.column(data = as_data, columns = c("RUS_Rf", "RUS_1_Rf_1", "MXUS_Rf", "MEM_Rf", "SMB", "HML", "MOM", "SBGC_Rf", "SBWG_Rf", "LHY_Rf", "DEFSPR", "FRBI_Rf", "GSCI__Rf", "VIX", "Rf"))
+shifted_data <- shift.column(data = as_data, up = FALSE, columns = c("RUS_Rf", "RUS_1_Rf_1", "MXUS_Rf", "MEM_Rf", "SMB", "HML", "MOM", "SBGC_Rf", "SBWG_Rf", "LHY_Rf", "DEFSPR", "FRBI_Rf", "GSCI__Rf", "VIX", "Rf"))
 ```
 
 ### HFRI linear model fit
@@ -329,28 +455,24 @@ stepHFRI <- stepAIC(fitHFRI, direction="both", trace = 0)
 The summary of the fitted model:
 ```
 Call:
-lm(formula = HFRI ~ RUS_1_Rf_1.Shifted + MEM_Rf.Shifted + DEFSPR.Shifted + 
-    VIX.Shifted, data = shifted_data)
+lm(formula = HFRI ~ MEM_Rf.Shifted, data = shifted_data)
 
 Residuals:
       Min        1Q    Median        3Q       Max 
--0.030908 -0.006944  0.000595  0.006436  0.055811 
+-0.100704 -0.010566  0.001039  0.012256  0.058643 
 
 Coefficients:
-                     Estimate Std. Error t value Pr(>|t|)    
-(Intercept)         0.0066077  0.0009076   7.280 9.53e-12 ***
-RUS_1_Rf_1.Shifted  0.3248679  0.0237401  13.684  < 2e-16 ***
-MEM_Rf.Shifted      0.0300763  0.0165486   1.817  0.07078 .  
-DEFSPR.Shifted     -2.0108122  0.8067856  -2.492  0.01358 *  
-VIX.Shifted         0.0867212  0.0307636   2.819  0.00535 ** 
+               Estimate Std. Error t value Pr(>|t|)    
+(Intercept)    0.008036   0.001472   5.458 1.64e-07 ***
+MEM_Rf.Shifted 0.067441   0.021627   3.118  0.00213 ** 
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
-Residual standard error: 0.01237 on 183 degrees of freedom
-Multiple R-squared:  0.6134,	Adjusted R-squared:  0.605 
-F-statistic: 72.59 on 4 and 183 DF,  p-value: < 2.2e-16
+Residual standard error: 0.01952 on 174 degrees of freedom
+Multiple R-squared:  0.05293,	Adjusted R-squared:  0.04749 
+F-statistic: 9.724 on 1 and 174 DF,  p-value: 0.002128
 ```
-The selected model has 4 independent variable parameters. The model was chosen based on AIC but the P-value is also significant for all but one variable.
+The selected model has 1 independent variable parameters. The model was chosen based on AIC but the P-value is also significant.
 
 The process and changes on the AIC value are presented with ANOVA:
 ```
@@ -364,23 +486,25 @@ HFRI ~ RUS_Rf.Shifted + RUS_1_Rf_1.Shifted + MXUS_Rf.Shifted +
     FRBI_Rf.Shifted + GSCI__Rf.Shifted + VIX.Shifted + Rf.Shifted
 
 Final Model:
-HFRI ~ RUS_1_Rf_1.Shifted + MEM_Rf.Shifted + DEFSPR.Shifted + 
-    VIX.Shifted
+HFRI ~ MEM_Rf.Shifted
 
 
-                 Step Df     Deviance Resid. Df Resid. Dev       AIC
-1                                           172 0.02746477 -1628.283
-2   - SBGC_Rf.Shifted  1 4.176713e-07       173 0.02746518 -1630.280
-3       - MOM.Shifted  1 5.586272e-07       174 0.02746574 -1632.276
-4       - HML.Shifted  1 2.821390e-06       175 0.02746856 -1634.257
-5  - GSCI__Rf.Shifted  1 9.506713e-06       176 0.02747807 -1636.192
-6   - SBWG_Rf.Shifted  1 1.349719e-05       177 0.02749157 -1638.100
-7        - Rf.Shifted  1 1.996187e-05       178 0.02751153 -1639.963
-8    - RUS_Rf.Shifted  1 3.988954e-05       179 0.02755142 -1641.691
-9   - MXUS_Rf.Shifted  1 2.502533e-05       180 0.02757644 -1643.520
-10      - SMB.Shifted  1 6.957733e-05       181 0.02764602 -1645.046
-11  - FRBI_Rf.Shifted  1 1.551728e-04       182 0.02780119 -1645.994
-12   - LHY_Rf.Shifted  1 1.871318e-04       183 0.02798833 -1646.733
+                   Step Df     Deviance Resid. Df Resid. Dev       AIC
+1                                             160 0.06363065 -1362.825
+2     - SBGC_Rf.Shifted  1 7.522408e-06       161 0.06363817 -1364.805
+3          - Rf.Shifted  1 1.675280e-05       162 0.06365492 -1366.758
+4     - MXUS_Rf.Shifted  1 3.734261e-05       163 0.06369227 -1368.655
+5         - MOM.Shifted  1 6.125003e-05       164 0.06375352 -1370.486
+6     - FRBI_Rf.Shifted  1 8.606730e-05       165 0.06383958 -1372.248
+7     - SBWG_Rf.Shifted  1 9.142439e-05       166 0.06393101 -1373.997
+8      - DEFSPR.Shifted  1 8.944197e-05       167 0.06402045 -1375.750
+9      - RUS_Rf.Shifted  1 1.141161e-04       168 0.06413457 -1377.437
+10        - SMB.Shifted  1 1.885882e-04       169 0.06432315 -1378.920
+11     - LHY_Rf.Shifted  1 1.205192e-04       170 0.06444367 -1380.591
+12   - GSCI__Rf.Shifted  1 3.380880e-04       171 0.06478176 -1381.670
+13        - VIX.Shifted  1 4.475212e-04       172 0.06522928 -1382.458
+14 - RUS_1_Rf_1.Shifted  1 3.709890e-04       173 0.06560027 -1383.460
+15        - HML.Shifted  1 7.277621e-04       174 0.06632803 -1383.518
 ```
 
 ### DS linear model fit
@@ -395,33 +519,34 @@ stepDS <- stepAIC(fitDS, direction="both", trace = 0)
 The summary of the selected model:
 ```
 Call:
-lm(formula = DS ~ RUS_1_Rf_1.Shifted + MEM_Rf.Shifted + HML.Shifted + 
-    MOM.Shifted + DEFSPR.Shifted + VIX.Shifted + Rf.Shifted, 
-    data = shifted_data)
+lm(formula = DS ~ RUS_Rf.Shifted + RUS_1_Rf_1.Shifted + MEM_Rf.Shifted + 
+    SMB.Shifted + HML.Shifted + SBWG_Rf.Shifted + FRBI_Rf.Shifted + 
+    Rf.Shifted, data = shifted_data)
 
 Residuals:
       Min        1Q    Median        3Q       Max 
--0.047743 -0.007798 -0.000913  0.008027  0.049501 
+-0.089433 -0.008916  0.000121  0.007841  0.045861 
 
 Coefficients:
                     Estimate Std. Error t value Pr(>|t|)    
-(Intercept)         0.011292   0.002747   4.111 5.99e-05 ***
-RUS_1_Rf_1.Shifted  0.129167   0.028231   4.575 8.83e-06 ***
-MEM_Rf.Shifted      0.042008   0.020214   2.078  0.03912 *  
-HML.Shifted         0.091155   0.032111   2.839  0.00505 ** 
-MOM.Shifted         0.056104   0.021174   2.650  0.00877 ** 
-DEFSPR.Shifted     -4.634487   0.949650  -4.880 2.32e-06 ***
-VIX.Shifted         0.107258   0.035786   2.997  0.00311 ** 
-Rf.Shifted         -1.173343   0.742434  -1.580  0.11577    
+(Intercept)         0.011516   0.003112   3.700 0.000292 ***
+RUS_Rf.Shifted      0.100514   0.039356   2.554 0.011545 *  
+RUS_1_Rf_1.Shifted  0.059818   0.029864   2.003 0.046791 *  
+MEM_Rf.Shifted      0.058664   0.026187   2.240 0.026401 *  
+SMB.Shifted         0.106444   0.041194   2.584 0.010623 *  
+HML.Shifted         0.052924   0.032996   1.604 0.110612    
+SBWG_Rf.Shifted     0.151945   0.072579   2.094 0.037815 *  
+FRBI_Rf.Shifted     0.301988   0.116229   2.598 0.010209 *  
+Rf.Shifted         -1.163379   0.816345  -1.425 0.155993    
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
-Residual standard error: 0.01423 on 180 degrees of freedom
-Multiple R-squared:  0.3696,	Adjusted R-squared:  0.3451 
-F-statistic: 15.08 on 7 and 180 DF,  p-value: 1.951e-15
+Residual standard error: 0.01524 on 167 degrees of freedom
+Multiple R-squared:  0.3166,	Adjusted R-squared:  0.2839 
+F-statistic: 9.672 on 8 and 167 DF,  p-value: 5.578e-11
 ```
 
-The stepwise algorithm has created a much more complex model with seven independent variables. The selection process follows:
+The stepwise algorithm has created a much more complex model with 8 independent variables. The selection process follows:
 ```
 Stepwise Model Path 
 Analysis of Deviance Table
@@ -433,20 +558,19 @@ DS ~ RUS_Rf.Shifted + RUS_1_Rf_1.Shifted + MXUS_Rf.Shifted +
     FRBI_Rf.Shifted + GSCI__Rf.Shifted + VIX.Shifted + Rf.Shifted
 
 Final Model:
-DS ~ RUS_1_Rf_1.Shifted + MEM_Rf.Shifted + HML.Shifted + MOM.Shifted + 
-    DEFSPR.Shifted + VIX.Shifted + Rf.Shifted
+DS ~ RUS_Rf.Shifted + RUS_1_Rf_1.Shifted + MEM_Rf.Shifted + SMB.Shifted + 
+    HML.Shifted + SBWG_Rf.Shifted + FRBI_Rf.Shifted + Rf.Shifted
 
 
                 Step Df     Deviance Resid. Df Resid. Dev       AIC
-1                                          172 0.03589531 -1577.955
-2  - SBWG_Rf.Shifted  1 2.165473e-06       173 0.03589747 -1579.944
-3 - GSCI__Rf.Shifted  1 7.334253e-06       174 0.03590481 -1581.905
-4      - SMB.Shifted  1 2.228979e-05       175 0.03592710 -1583.789
-5   - LHY_Rf.Shifted  1 6.192050e-05       176 0.03598902 -1585.465
-6  - SBGC_Rf.Shifted  1 4.392285e-05       177 0.03603294 -1587.236
-7  - FRBI_Rf.Shifted  1 1.049138e-04       178 0.03613785 -1588.689
-8  - MXUS_Rf.Shifted  1 1.738925e-04       179 0.03631175 -1589.787
-9   - RUS_Rf.Shifted  1 1.317118e-04       180 0.03644346 -1591.106
+1                                          160 0.03774065 -1454.760
+2  - SBGC_Rf.Shifted  1 5.058967e-08       161 0.03774070 -1456.760
+3   - LHY_Rf.Shifted  1 1.035588e-04       162 0.03784426 -1458.278
+4      - MOM.Shifted  1 9.982741e-05       163 0.03794409 -1459.814
+5 - GSCI__Rf.Shifted  1 1.348885e-04       164 0.03807898 -1461.190
+6      - VIX.Shifted  1 2.120449e-04       165 0.03829102 -1462.212
+7  - MXUS_Rf.Shifted  1 2.451101e-04       166 0.03853613 -1463.089
+8   - DEFSPR.Shifted  1 2.762344e-04       167 0.03881237 -1463.832
 ```
 
 ## Linear model analysis and correction
@@ -461,42 +585,123 @@ par(mfrow=c(1,1))
 ```
 ![HFRI model plots](images/HFRIlm.png)
 
-Starting from normallity of residuals, one can easily observe on the QQ-plot that the residuals are problematic at the tails of the distribution. The Shapiro-Wilk test on the residuals confirms that:
+Starting from normallity of residuals, one can easily observe on the QQ-plot that the residuals are problematic at the left tail of the distribution. The Shapiro-Wilk test on the residuals confirms that:
 ```
 	Shapiro-Wilk normality test
 
 data:  residuals(stepHFRI)
-W = 0.96732, p-value = 0.0002236
+W = 0.95846, p-value = 4.502e-05
 ```
 
-The ACF and PACF plots bellow indicate correlation on the residuals of the fitted model as there are small spikes at lag 1 (and lag 10 for PACF).
+The ACF and PACF plots bellow indicate no autocorrelation on the residuals of the fitted model.
 
 ![ACF and PACF of residuals](images/HFRIlmacf.png)
 
-The Box-Pierce and Ljung-Box tests on the residuals confirm this autocorrelation:
+The Box-Pierce and Ljung-Box tests on the residuals confirm this:
 ```
 	Box-Pierce test
 
 data:  residuals(stepHFRI)
-X-squared = 5.0877, df = 1, p-value = 0.0241
+X-squared = 0.72401, df = 1, p-value = 0.3948
 ```
 ```
 	Box-Ljung test
 
 data:  residuals(stepHFRI)
-X-squared = 5.1693, df = 1, p-value = 0.02299
+X-squared = 0.73642, df = 1, p-value = 0.3908
 ```
 
-Also, the Residual vs Fitted plot above shows an indication of heteroscedasticity as the variance arround 0 seems to be larger. The ACF and PACF plots on the squared residuals indicate that there may be a problem at lag 2:
+Also, the Residual vs Fitted plot above shows no indication of heteroscedasticity even though data are slightly shifted left from 0. The ACF and PACF plots on the squared residuals indicate that there is no autocorrelation in the squares of the residuals.
 
 ![ACF and PACF of squared residuals](images/HFRIlm2acf.png)
 
-The Breusch-Pagan test for linear heteroscedasticity doesn't reject the assumption for hoscedasticity:
+The Box-Pierce and Box-Ljung tests for autocorrelation at squared residuals indicate homoscedasticity.
 ```
-	Breusch-Pagan test
+	Box-Pierce test
 
-data:  stepHFRI
-BP = 4.9088, df = 4, p-value = 0.2968
+data:  residuals(stepHFRI)^2
+X-squared = 0.10344, df = 2, p-value = 0.9496
+```
+```
+	Box-Ljung test
+
+data:  residuals(stepHFRI)^2
+X-squared = 0.10552, df = 2, p-value = 0.9486
 ```
 
 ### DS Model
+
+The plots of residuals of the linear model:
+```R
+par(mfrow=c(2,2))
+plot(stepDS)
+par(mfrow=c(1,1))
+```
+![DS model plots](images/DSlm.png)
+
+On the QQ-plot that the residuals are problematic at the tails of the distribution. The Shapiro-Wilk test on the residuals confirms that:
+```
+	Shapiro-Wilk normality test
+
+data:  residuals(stepDS)
+W = 0.92826, p-value = 1.202e-07
+```
+
+The ACF and PACF plots bellow indicate no autocorrelation on the residuals of the fitted model.
+
+![ACF and PACF of residuals](images/DSlmacf.png)
+
+The Box-Pierce and Ljung-Box tests on the residuals confirm no autocorrelation:
+```
+	Box-Pierce test
+
+data:  residuals(stepDS)
+X-squared = 10.302, df = 8, p-value = 0.2445
+```
+```
+	Box-Ljung test
+
+data:  residuals(stepDS)
+X-squared = 10.714, df = 8, p-value = 0.2184
+```
+
+The scale location and Residuals vs Fitted plots above indicate no issue of heteroscedasticity. The ACF and PACF plots on the squared residuals confirm that:
+
+![ACF and PACF of squared residuals](images/DSlm2acf.png)
+
+The Box-Pierce and Box-Ljung tests for autocorrelation at squared residuals indicate homoscedasticity.
+```
+	Box-Pierce test
+
+data:  residuals(stepDS)^2
+X-squared = 0.0097234, df = 1, p-value = 0.9214
+```
+```
+	Box-Ljung test
+
+data:  residuals(stepDS)^2
+X-squared = 0.0098901, df = 1, p-value = 0.9208
+```
+
+### Correcting autocorrelation with ARMA models for residuals
+
+As the diagnostics show that both ARIMA and regression models have no issues with autocorrelation or heteroscedasticity, there is no need to combine these models. However during experimentation methods were created to accound for autocorrelation of residuals and heteroscedasticity and can be found in the code (commented out, with a note on top)
+
+## Model Selection
+
+The models constructed are the following:
+
+ModelHFRI: MA(1)
+![MA1](https://latex.codecogs.com/gif.latex?HFRI_t%20%3D%200.0081%20&plus;%200.2357%5Cvarepsilon_%7Bt-1%7D%20&plus;%20%5Cvarepsilon_t%20%5Chfill%20%5Cvarepsilon_t%20%5Csim%20N%280%2C%200.0003721%29)
+
+ModelDS: MA(2)
+![MA2](https://latex.codecogs.com/gif.latex?HFRI_t%20%3D%200.0088%20&plus;%200.6033%5Cvarepsilon_%7Bt-1%7D%20&plus;%200.2295%5Cvarepsilon_%7Bt-2%7D%20&plus;%20%5Cvarepsilon_t%20%5Chfill%20%5Cvarepsilon_t%20%5Csim%20N%280%2C%200.0002294%29)
+
+ModelHFRI12, ModelDS12: MA(12)
+![MA12](https://latex.codecogs.com/gif.latex?HFRI_t%20%3D%20%5Ctheta_1%5Cvarepsilon_%7Bt-1%7D%20&plus;%20%5Ctheta_2%5Cvarepsilon_%7Bt-2%7D%20&plus;%20%5Ctheta_3%5Cvarepsilon_%7Bt-3%7D%20&plus;%20%5Ctheta_4%5Cvarepsilon_%7Bt-4%7D%20&plus;%20%5Ctheta_5%5Cvarepsilon_%7Bt-5%7D%20&plus;%20%5Ctheta_6%5Cvarepsilon_%7Bt-6%7D%20&plus;%20%5Ctheta_7%5Cvarepsilon_%7Bt-7%7D%20&plus;%20%5Ctheta_8%5Cvarepsilon_%7Bt-8%7D%20&plus;%20%5Ctheta_9%5Cvarepsilon_%7Bt-9%7D%20&plus;%20%5Ctheta_%7B10%7D%5Cvarepsilon_%7Bt-10%7D%20&plus;%20%5Ctheta_%7B11%7D%5Cvarepsilon_%7Bt-11%7D%20&plus;%20%5Ctheta_%7B12%7D%5Cvarepsilon_%7Bt-12%7D%20&plus;%20%5Cvarepsilon_t)
+
+stepHFRI: Linear Model
+
+
+## Forecast
+
