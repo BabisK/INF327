@@ -748,9 +748,10 @@ msfeMA12HFRI <- sum((forecastMA12HFRI$pred - shifted_data_new$HFRI)^2)/12
 msfeLMHFRI <- sum((forecastLMHFRI$fit - shifted_data_new$HFRI)^2)/12
 ```
 The results are:
-MA(1) HFRI MSFE: 0.0001830464
-MA(12) HFRI MSFE: 0.0001808294
-LM HFRI MSFE: 0.0002173593
+
+* MA(1) HFRI MSFE: 0.0001830464
+* MA(12) HFRI MSFE: 0.0001808294
+* LM HFRI MSFE: 0.0002173593
 
 The hit ratio is calculated like this:
 ```R
@@ -760,9 +761,10 @@ hitLMHFRI <- sum((forecastLMHFRI$fit * shifted_data_new$HFRI) > 0)/12
 ```
 
 The results are:
-MA(1) HFRI HR: 66.6%
-MA(12) HFRI HR: 58.3%
-LM HFRI HR: 66.6%
+
+* MA(1) HFRI HR: 66.6%
+* MA(12) HFRI HR: 58.3%
+* LM HFRI HR: 66.6%
 
 The hit ratio is not accurate as all the predictions where positive values.
 The MA(12) has the best MSFE but not by far, second being the MA(1) model.
@@ -789,9 +791,10 @@ msfeLMDS <- sum((forecastLMDS$fit - shifted_data_new$DS)^2)/12
 ```
 
 The results are:
-MA(2) DS MSFE: 9.752394e-05
-MA(12) DS MSFE: 0.0001227059
-LM HFRI MSFE: 8.255168e-05
+
+* MA(2) DS MSFE: 9.752394e-05
+* MA(12) DS MSFE: 0.0001227059
+* LM HFRI MSFE: 8.255168e-05
 
 The hit ratio is calculated like this:
 ```R
@@ -801,9 +804,10 @@ hitLMDS <- sum((forecastLMDS$fit * shifted_data_new$DS) > 0)/12
 ```
 
 The results are:
-MA(2) DS HR: 66.6%
-MA(12) DS HR: 66.6%
-LM DS HR: 66.6%
+
+* MA(2) DS HR: 66.6%
+* MA(12) DS HR: 66.6%
+* LM DS HR: 66.6%
 
 In this series, the linear model does the most accurate prediction but the MA(2) model is very close.
 
