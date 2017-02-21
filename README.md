@@ -196,6 +196,53 @@ s.e.  0.0664     0.0018
 sigma^2 estimated as 0.0003721:  log likelihood = 447.64,  aic = -889.28
 ```
 
+The ACF and PACF plots of the residuals of the model are good, no more autocorrelation:
+
+![MA(1) ACF/PACF](images/HFRIarmaacf.png)
+
+The Box-Pierce and Box-Ljung tests confirm the absence of autocorrelation:
+```
+	Box-Pierce test
+
+data:  residuals(modelHFRI)
+X-squared = 0.09725, df = 1, p-value = 0.7552
+```
+```
+	Box-Ljung test
+
+data:  residuals(modelHFRI)
+X-squared = 0.098907, df = 1, p-value = 0.7531
+```
+
+The QQ-plot of the residuals indicates a problem at the tails of the distribution:
+
+![MA(1) ACF/PACF](images/HFRIarmaqq.png)
+
+And the Shapiro test confirms it:
+```
+	Shapiro-Wilk normality test
+
+data:  residuals(modelHFRI)
+W = 0.97048, p-value = 0.000824
+```
+
+Finally, the squares of the residuals are not autocorrelated as can be seen in the ACF and PACF plots bellow:
+![MA(1) ACF/PACF](images/HFRIarmaacf2.png)
+
+The Box-Pierce and Box-Ljung tests confirm the absence of autocorrelation on the residuals:
+```
+	Box-Pierce test
+
+data:  residuals(modelHFRI)^2
+X-squared = 0.38769, df = 1, p-value = 0.5335
+```
+```
+	Box-Ljung test
+
+data:  residuals(modelHFRI)^2
+X-squared = 0.3943, df = 1, p-value = 0.53
+```
+
 #### DS
 
 A MA(2) model for DS:
@@ -212,6 +259,52 @@ Coefficients:
 s.e.  0.0766  0.0745     0.0021
 
 sigma^2 estimated as 0.0002294:  log likelihood = 490.28,  aic = -972.56
+```
+
+The ACF and PACF plots of the residuals of the model are good, no more autocorrelation:
+
+![MA(2) ACF/PACF](images/DSarmaacf.png)
+
+The Box-Pierce and Box-Ljung tests confirm the absence of autocorrelation:
+```
+	Box-Pierce test
+
+data:  residuals(modelDS)
+X-squared = 0.011726, df = 1, p-value = 0.9138
+```
+```
+	Box-Ljung test
+
+data:  residuals(modelDS)
+X-squared = 0.011926, df = 1, p-value = 0.913
+```
+The QQ-plot of the residuals indicates a problem at the tails of the distribution:
+
+![MA(2) ACF/PACF](images/DSarmaqq.png)
+
+And the Shapiro test confirms it:
+```
+	Shapiro-Wilk normality test
+
+data:  residuals(modelDS)
+W = 0.92785, p-value = 1.047e-07
+```
+
+Finally, the squares of the residuals are not autocorrelated as can be seen in the ACF and PACF plots bellow:
+![MA(2) ACF/PACF](images/DSarmaacf2.png)
+
+The Box-Pierce and Box-Ljung tests confirm the absence of autocorrelation on the residuals:
+```
+	Box-Pierce test
+
+data:  residuals(modelDS)^2
+X-squared = 0.01825, df = 1, p-value = 0.8925
+```
+```
+	Box-Ljung test
+
+data:  residuals(modelDS)^2
+X-squared = 0.018561, df = 1, p-value = 0.8916
 ```
 
 ## Linear Regression
@@ -355,3 +448,55 @@ DS ~ RUS_1_Rf_1.Shifted + MEM_Rf.Shifted + HML.Shifted + MOM.Shifted +
 8  - MXUS_Rf.Shifted  1 1.738925e-04       179 0.03631175 -1589.787
 9   - RUS_Rf.Shifted  1 1.317118e-04       180 0.03644346 -1591.106
 ```
+
+## Linear model analysis and correction
+
+### HFRI model
+
+First diagnostic for every linear model is through the plots of the residuals.
+```R
+par(mfrow=c(2,2))
+plot(stepHFRI)
+par(mfrow=c(1,1))
+```
+![HFRI model plots](images/HFRIlm.png)
+
+Starting from normallity of residuals, one can easily observe on the QQ-plot that the residuals are problematic at the tails of the distribution. The Shapiro-Wilk test on the residuals confirms that:
+```
+	Shapiro-Wilk normality test
+
+data:  residuals(stepHFRI)
+W = 0.96732, p-value = 0.0002236
+```
+
+The ACF and PACF plots bellow indicate correlation on the residuals of the fitted model as there are small spikes at lag 1 (and lag 10 for PACF).
+
+![ACF and PACF of residuals](images/HFRIlmacf.png)
+
+The Box-Pierce and Ljung-Box tests on the residuals confirm this autocorrelation:
+```
+	Box-Pierce test
+
+data:  residuals(stepHFRI)
+X-squared = 5.0877, df = 1, p-value = 0.0241
+```
+```
+	Box-Ljung test
+
+data:  residuals(stepHFRI)
+X-squared = 5.1693, df = 1, p-value = 0.02299
+```
+
+Also, the Residual vs Fitted plot above shows an indication of heteroscedasticity as the variance arround 0 seems to be larger. The ACF and PACF plots on the squared residuals indicate that there may be a problem at lag 2:
+
+![ACF and PACF of squared residuals](images/HFRIlm2acf.png)
+
+The Breusch-Pagan test for linear heteroscedasticity doesn't reject the assumption for hoscedasticity:
+```
+	Breusch-Pagan test
+
+data:  stepHFRI
+BP = 4.9088, df = 4, p-value = 0.2968
+```
+
+### DS Model
